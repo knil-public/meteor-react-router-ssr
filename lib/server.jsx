@@ -43,10 +43,11 @@ ReactRouterSSR.LoadWebpackStats = function(stats) {
   webpackStats = stats;
 };
 
-ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
-  // this line just patches Subscribe and find mechanisms
-  patchSubscribeData(ReactRouterSSR);
+// this line just patches Subscribe and find mechanisms
+patchSubscribeData(ReactRouterSSR);
 
+ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
+  
   if (!clientOptions) {
     clientOptions = {};
   }
