@@ -18,8 +18,8 @@ Package.onUse(function(api) {
     'ecmascript',
     'tracker',
     'minimongo@1.0.0',
-    'meteorhacks:fast-render@2.16.0',
-    'meteorhacks:inject-data@2.0.0',
+    'staringatlights:fast-render@2.16.2',
+    'staringatlights:inject-data@2.0.4',
     'tmeasday:check-npm-versions@0.2.0'
   ]);
 
@@ -34,7 +34,7 @@ Package.onUse(function(api) {
   api.use([
     'autopublish@1.0.0',
     'tmeasday:publish-counts@0.7.0',
-    'promise@0.5.1'
+    'promise@0.8.8'
   ], 'server', {weak: true})
 
   api.export('ReactRouterSSR');
