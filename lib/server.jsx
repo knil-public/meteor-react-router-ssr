@@ -26,7 +26,7 @@ function IsAppUrl(req) {
   if(url.startsWith('/__cordova')) {
     return false;
   }
-     
+
   // Avoid serving app HTML for declared routes such as /sockjs/.
   if(RoutePolicy.classify(url)) {
     return false;
@@ -51,7 +51,7 @@ ReactRouterSSR.LoadWebpackStats = function(stats) {
 patchSubscribeData(ReactRouterSSR);
 
 ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
-  
+
   if (!clientOptions) {
     clientOptions = {};
   }
@@ -208,13 +208,18 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
         ...serverOptions.props
       };
 
-      // Instead of fetchComponentData we need to fetch from Apollo Data
-      //fetchComponentData(serverOptions, renderProps);
-      let appGenerator = (addProps) => <RouterContext {...renderProps} {...addProps} />;
 
       let app;
       if (typeof clientOptions.wrapperHook === 'function') {
+        // Instead of fetchComponentData we need to fetch from Apollo Data
+        let appGenerator = (addProps) => <RouterContext {...renderProps} {...addProps} />;
         app = clientOptions.wrapperHook(appGenerator);
+      }
+      else {
+        console.log("using fetchComponentData,no wrapperhook")
+        fetchComponentData(serverOptions, renderProps);
+        app = <RouterContext {...renderProps} />;
+
       }
 
       // Adding new parameter dataLoader for loading data through Apollo
@@ -224,10 +229,11 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
 
       if (!serverOptions.disableSSR){
         // I'm pretty sure this could be avoided in a more elegant way?
-        html = ReactDOMServer.renderToString(app);
+        ReactDOMServer.renderToString(app);
         const context = FastRender.frContext.get();
         const data = context.getData();
         InjectData.pushData(res, 'fast-render-data', data);
+        html = ReactDOMServer.renderToString(app);
       } else if (serverOptions.loadingScreen){
         html = serverOptions.loadingScreen;
       }
