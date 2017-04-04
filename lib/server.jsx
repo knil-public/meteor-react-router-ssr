@@ -23,7 +23,7 @@ function IsAppUrl(req) {
     return false;
   }
 
-  if(url.startsWith('/__cordova') {
+  if(url.startsWith('/__cordova')) {
     return false;
   }
      
