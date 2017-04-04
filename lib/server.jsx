@@ -23,6 +23,10 @@ function IsAppUrl(req) {
     return false;
   }
 
+  if(url.startsWith('/__cordova')) {
+    return false;
+  }
+  
   // Avoid serving app HTML for declared routes such as /sockjs/.
   if(RoutePolicy.classify(url)) {
     return false;
@@ -212,11 +216,13 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
 
       if (!serverOptions.disableSSR){
         // I'm pretty sure this could be avoided in a more elegant way?
-        ReactDOMServer.renderToString(app);
+        let firstrender = ReactDOMServer.renderToString(app);
         const context = FastRender.frContext.get();
         const data = context.getData();
         InjectData.pushData(res, 'fast-render-data', data);
-        html = ReactDOMServer.renderToString(app);
+        // html = ReactDOMServer.renderToString(app);
+        html = firstrender
+
       } else if (serverOptions.loadingScreen){
         html = serverOptions.loadingScreen;
       }
