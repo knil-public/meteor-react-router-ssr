@@ -224,11 +224,10 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
 
       if (!serverOptions.disableSSR){
         // I'm pretty sure this could be avoided in a more elegant way?
-        ReactDOMServer.renderToString(app);
+        html = ReactDOMServer.renderToString(app);
         const context = FastRender.frContext.get();
         const data = context.getData();
         InjectData.pushData(res, 'fast-render-data', data);
-        html = ReactDOMServer.renderToString(app);
       } else if (serverOptions.loadingScreen){
         html = serverOptions.loadingScreen;
       }
