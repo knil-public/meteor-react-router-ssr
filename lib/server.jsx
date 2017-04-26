@@ -13,7 +13,7 @@ import ReactDOMServer from 'react-dom/server';
 import cookieParser from 'cookie-parser';
 import Cheerio from 'cheerio';
 
-function IsAppUrl(req) {
+function IsAppUrl(req,routeRoots) {
   var url = req.url;
   if(url === '/favicon.ico' || url === '/robots.txt') {
     return false;
@@ -31,7 +31,12 @@ function IsAppUrl(req) {
   if(RoutePolicy.classify(url)) {
     return false;
   }
-  return true;
+  
+  let first = url.split(/[/\?#]/,2)[1]
+  
+  let isAppUrl = routeRoots[first]
+  console.log("ssr IsAppUrl",first,isAppUrl)
+  return isAppUrl
 }
 
 let webpackStats;
@@ -63,12 +68,26 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
   if (!serverOptions.webpackStats) {
     serverOptions.webpackStats = webpackStats;
   }
-
+  
+  let routeRoots = _.chain(routes.props.children)
+      .map(function(route) {return route.props.path})
+      .filter((path) => typeof path==='string')
+      .map((path) =>  path.split("/")[0])
+      .filter(path => path.length>0)
+      .map(path => [path,true])
+      .object()
+      .value();
+  console.log("ssr server.jsx: Routes Roots:",routeRoots);
+  
+  
+  
+  
+  
   Meteor.bindEnvironment(function() {
     WebApp.rawConnectHandlers.use(cookieParser());
 
     WebApp.connectHandlers.use(Meteor.bindEnvironment(function(req, res, next) {
-      if (!IsAppUrl(req)) {
+      if (!IsAppUrl(req,routeRoots)) {
         next();
         return;
       }
@@ -229,11 +248,13 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
 
       if (!serverOptions.disableSSR){
         // I'm pretty sure this could be avoided in a more elegant way?
-        ReactDOMServer.renderToString(app);
+        let firstrender = ReactDOMServer.renderToString(app);
         const context = FastRender.frContext.get();
         const data = context.getData();
         InjectData.pushData(res, 'fast-render-data', data);
-        html = ReactDOMServer.renderToString(app);
+        // html = ReactDOMServer.renderToString(app);
+        html = firstrender
+
       } else if (serverOptions.loadingScreen){
         html = serverOptions.loadingScreen;
       }
