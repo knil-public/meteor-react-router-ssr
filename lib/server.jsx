@@ -59,7 +59,7 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
   if (!clientOptions) {
     clientOptions = {};
   }
-
+  
   if (!serverOptions) {
     serverOptions = {};
   }
@@ -210,7 +210,6 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
       if (serverOptions.preRender) {
         serverOptions.preRender(req, res);
       }
-
       // Uncomment these two lines if you want to easily trigger
       // multiple client requests from different browsers at the same time
 
@@ -232,8 +231,8 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
       if (typeof clientOptions.wrapperHook === 'function') {
         app = clientOptions.wrapperHook(app);
       }
-
-      if (!serverOptions.disableSSR){
+      let isDisabledPath = serverOptions.isDisabledPath && serverOptions.isDisabledPath(req.url)
+      if (!serverOptions.disableSSR && !isDisabledPath){
         // I'm pretty sure this could be avoided in a more elegant way?
         let firstrender = ReactDOMServer.renderToString(app);
         const context = FastRender.frContext.get();
@@ -244,7 +243,8 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
 
       } else if (serverOptions.loadingScreen){
         html = serverOptions.loadingScreen;
-      }
+      } else 
+          html = "<html></html>"
 
       css = global.__STYLE_COLLECTOR__;
 
