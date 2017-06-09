@@ -246,12 +246,20 @@ function generateSSRData(clientOptions, serverOptions, req, res, renderProps) {
       } else 
           html = "<html></html>"
 
-      css = global.__STYLE_COLLECTOR__;
+      css = global.__STYLE_COLLECTOR__;      
 
+      if(serverOptions.cssRenderer)
+      {
+          let res = serverOptions.cssRenderer(html)
+          css = css+'\n'+res.css
+          html = res.html
+      }
+          
       if (typeof serverOptions.dehydrateHook === 'function') {
         InjectData.pushData(res, 'dehydrated-initial-data', JSON.stringify(serverOptions.dehydrateHook()));
       }
 
+       
       if (serverOptions.postRender) {
         serverOptions.postRender(req, res);
       }
