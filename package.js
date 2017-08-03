@@ -19,11 +19,11 @@ Package.onUse(function(api) {
     'tracker',
     'minimongo@1.0.0',
     'staringatlights:fast-render@2.16.2',
-    'staringatlights:inject-data@2.0.4',
-    'tmeasday:check-npm-versions@0.2.0'
+    'staringatlights:inject-data@2.0.4'
   ]);
 
   api.use([
+    'tmeasday:check-npm-versions@0.2.0',
     'underscore@1.0.3',
     'webapp@1.2.0',
     'mongo@1.0.0',
@@ -37,6 +37,8 @@ Package.onUse(function(api) {
     'promise@0.8.8'
   ], 'server', {weak: true})
 
+
+  api.mainModule('./lib/client.js','client');
+  api.mainModule('./lib/server.js','server');
   api.export('ReactRouterSSR');
-  api.mainModule('lib/react-router-ssr.js');
 });
