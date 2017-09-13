@@ -1,3 +1,8 @@
+# Knil Version
+ - various fixes
+ - ability to disable ssr on some routes
+ - fix to allow hot code push by disabling ssr for important meteor system routes
+ 
 # WARNING: This project is no longer in active maintenance. If you would like to maintain it, contact me at benoit@thereactivestack.com
 
 Server-side rendering for react-router and react-meteor-data rehydratating Meteor subscriptions
